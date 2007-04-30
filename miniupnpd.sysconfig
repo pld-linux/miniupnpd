@@ -1,0 +1,7 @@
+# Customized settings for miniupnpd
+
+# Define nice level for miniupnpd
+#SERVICE_RUN_NICE_LEVEL="+0"
+
+# Daemon options
+#UPNPD_OPTS=""
