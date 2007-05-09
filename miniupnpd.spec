@@ -1,6 +1,7 @@
-#
+# TODO: optflags or noarch
 %define pre RC4
 Summary:	Small UPnP Daemon
+Summary(pl.UTF-8):	Mały demon UPnP
 Name:		miniupnpd
 Version:	1.0
 Release:	0.%{pre}.1
@@ -19,6 +20,10 @@ Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
+Small UPnP Daemon.
+
+%description -l pl.UTF-8
+Mały demon UPnP.
 
 %prep
 %setup -q -n %{name}-%{version}-%{pre}
@@ -28,11 +33,11 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/{%{_sbindir},%{_sysconfdir}/rc.d/init.d,%{_sysconfdir}/sysconfig,%{_sysconfdir}/%{name}}
+install -d $RPM_BUILD_ROOT{%{_sbindir},/etc/rc.d/init.d,/etc/sysconfig,%{_sysconfdir}/%{name}}
 
-install miniupnpd $RPM_BUILD_ROOT/%{_sbindir}
-install %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/rc.d/init.d/%{name}
-install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/%{name}
+install miniupnpd $RPM_BUILD_ROOT%{_sbindir}
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/
 
 %clean
