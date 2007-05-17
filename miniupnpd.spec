@@ -1,4 +1,3 @@
-# TODO: optflags or noarch
 %define pre RC4
 Summary:	Small UPnP Daemon
 Summary(pl.UTF-8):	Mały demon UPnP
@@ -29,7 +28,9 @@ Mały demon UPnP.
 %setup -q -n %{name}-%{version}-%{pre}
 
 %build
-%{__make} -f Makefile.linux
+%{__make} -f Makefile.linux \
+	CC="%{__cc}" \
+	CFLAGS="%{rpmcflags} -Wall -D_GNU_SOURCE"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -38,7 +39,7 @@ install -d $RPM_BUILD_ROOT{%{_sbindir},/etc/rc.d/init.d,/etc/sysconfig,%{_syscon
 install miniupnpd $RPM_BUILD_ROOT%{_sbindir}
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
-install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/
+install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
