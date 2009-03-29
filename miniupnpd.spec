@@ -1,20 +1,28 @@
-%define pre RC4
+# TODO
+# - iptables or kernel headers messup:
+# - th:
+#   linux/iptcrdr.c:17:22: error: iptables.h: No such file or directory
+#   linux/iptcrdr.c:18:41: error: linux/netfilter_ipv4/ip_nat.h: No such file or directory
+#   linux/iptcrdr.c: In function 'get_redirect_rule':
+# - ac:
+#   netfilter/iptcrdr.c:23:36: linux/netfilter/nf_nat.h: No such file or directory
 Summary:	Small UPnP Daemon
 Summary(pl.UTF-8):	Mały demon UPnP
 Name:		miniupnpd
-Version:	1.0
-Release:	0.%{pre}.1
+Version:	1.2
+Release:	0.1
 License:	BSD
 Group:		Applications
-Source0:	http://miniupnp.free.fr/files/%{name}-%{version}-RC4.tar.gz
-# Source0-md5:	de6fd266bf15c4f6781895d19c8efbca
+Source0:	http://miniupnp.tuxfamily.org/files/%{name}-%{version}.tar.gz
+# Source0-md5:	48f1fa81e5c2cb1c561c29cdcf261602
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.conf
-URL:		http://miniupnp.free.fr/
+URL:		http://miniupnp.tuxfamily.org/
 BuildRequires:	iptables-devel
 BuildRequires:	rpmbuild(macros) >= 1.228
 Requires(post):	libuuid
+Requires(post):	sed >= 4.0
 Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -25,7 +33,7 @@ Small UPnP Daemon.
 Mały demon UPnP.
 
 %prep
-%setup -q -n %{name}-%{version}-%{pre}
+%setup -q
 
 %build
 %{__make} -f Makefile.linux \
@@ -35,7 +43,6 @@ Mały demon UPnP.
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},/etc/rc.d/init.d,/etc/sysconfig,%{_sysconfdir}/%{name}}
-
 install miniupnpd $RPM_BUILD_ROOT%{_sbindir}
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
@@ -45,17 +52,17 @@ install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 rm -rf $RPM_BUILD_ROOT
 
 %post
-if [ ! -f %{_sysconfdir}/miniupnpd/uuid ] ; then
+if [ ! -f %{_sysconfdir}/miniupnpd/uuid ]; then
 	echo "Generating UPnP uuid..."
 	umask 066
 	uuidgen > %{_sysconfdir}/miniupnpd/uuid
 fi
 
-if [ -f %{_sysconfdir}/miniupnpd/uuid ] ; then
+if [ -f %{_sysconfdir}/miniupnpd/uuid ]; then
 	UUID=`cat %{_sysconfdir}/miniupnpd/uuid`
 	if [ -n "$UUID" ] ; then
 		echo "Updating UUID in miniupnpd config file..."
-   	%{__sed} -i -e "s/^uuid=[-0-9a-f]*/uuid=`cat %{_sysconfdir}/miniupnpd/uuid`/" %{_sysconfdir}/miniupnpd/miniupnpd.conf
+		%{__sed} -i -e "s/^uuid=[-0-9a-f]*/uuid=`cat %{_sysconfdir}/miniupnpd/uuid`/" %{_sysconfdir}/miniupnpd/miniupnpd.conf
 	fi
 fi
 
