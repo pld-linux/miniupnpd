@@ -80,6 +80,16 @@ case "$1" in
 		start
 	fi
 	;;
+  try-restart)
+        if [ -f /var/lock/subsys/miniupnpd ]; then
+		msg_stopping miniupnpd
+		stop
+		msg_starting miniupnpd
+		start
+		RETVAL=$?
+	# else return successfully
+	fi
+	;;
   reload|graceful|force-reload)
 	if [ -f /var/lock/subsys/miniupnpd ]; then
 		msg_reloading miniupnpd
@@ -91,7 +101,7 @@ case "$1" in
 	fi
 	;;
   *)
-	msg_usage "$0 {start|stop|restart|reload|force-reload|graceful|status}"
+	msg_usage "$0 {start|stop|restart|try-restart|reload|force-reload|graceful|status}"
 	exit 3
 	;;
 esac

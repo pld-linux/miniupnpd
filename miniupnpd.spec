@@ -1,29 +1,22 @@
-# TODO
-# - iptables or kernel headers messup:
-# - th:
-#   linux/iptcrdr.c:17:22: error: iptables.h: No such file or directory
-#   linux/iptcrdr.c:18:41: error: linux/netfilter_ipv4/ip_nat.h: No such file or directory
-#   linux/iptcrdr.c: In function 'get_redirect_rule':
-# - ac:
-#   netfilter/iptcrdr.c:23:36: linux/netfilter/nf_nat.h: No such file or directory
 Summary:	Small UPnP Daemon
 Summary(pl.UTF-8):	Mały demon UPnP
 Name:		miniupnpd
-Version:	1.2
-Release:	0.1
+Version:	1.7
+Release:	1
 License:	BSD
-Group:		Applications
+Group:		Networking/Daemons
 Source0:	http://miniupnp.tuxfamily.org/files/%{name}-%{version}.tar.gz
-# Source0-md5:	48f1fa81e5c2cb1c561c29cdcf261602
+# Source0-md5:	5af9e8332d34a7b490d0d2ed3e674196
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.conf
 URL:		http://miniupnp.tuxfamily.org/
-BuildRequires:	iptables-devel
+BuildRequires:	iptables-devel >= 1.4.3
 BuildRequires:	rpmbuild(macros) >= 1.228
 Requires(post):	libuuid
 Requires(post):	sed >= 4.0
 Requires(post,preun):	/sbin/chkconfig
+Requires:	iptables-libs >= 1.4.3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -38,7 +31,8 @@ Mały demon UPnP.
 %build
 %{__make} -f Makefile.linux \
 	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -Wall -D_GNU_SOURCE"
+	CFLAGS="%{rpmcflags} -fno-strict-aliasing -Wall -D_GNU_SOURCE -DIPTABLES_143" \
+	LIBS="-lip4tc -lip6tc"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -77,7 +71,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README
+%doc Changelog.txt LICENSE README
 %attr(755,root,root) %{_sbindir}/miniupnpd
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
