@@ -2,7 +2,7 @@ Summary:	Small UPnP Daemon
 Summary(pl.UTF-8):	Mały demon UPnP
 Name:		miniupnpd
 Version:	1.7
-Release:	1
+Release:	2
 License:	BSD
 Group:		Networking/Daemons
 Source0:	http://miniupnp.tuxfamily.org/files/%{name}-%{version}.tar.gz
