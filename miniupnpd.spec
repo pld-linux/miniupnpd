@@ -29,7 +29,7 @@ Mały demon UPnP.
 %setup -q
 
 %build
-%{__make} -f Makefile.linux \
+%{__make} -f Makefile.linux -j1 \
 	CC="%{__cc}" \
 	CFLAGS="%{rpmcflags} -fno-strict-aliasing -Wall -D_GNU_SOURCE -DIPTABLES_143" \
 	LIBS="-lip4tc -lip6tc"
