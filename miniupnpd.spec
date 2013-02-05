@@ -2,7 +2,7 @@ Summary:	Small UPnP Daemon
 Summary(pl.UTF-8):	Mały demon UPnP
 Name:		miniupnpd
 Version:	1.7
-Release:	2
+Release:	3
 License:	BSD
 Group:		Networking/Daemons
 Source0:	http://miniupnp.tuxfamily.org/files/%{name}-%{version}.tar.gz
@@ -36,8 +36,9 @@ Mały demon UPnP.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sbindir},/etc/rc.d/init.d,/etc/sysconfig,%{_sysconfdir}/%{name}}
+install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man1,/etc/rc.d/init.d,/etc/sysconfig,%{_sysconfdir}/%{name}}
 install miniupnpd $RPM_BUILD_ROOT%{_sbindir}
+cp -p miniupnpd.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
@@ -77,3 +78,4 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/%{name}.conf
+%{_mandir}/man1/miniupnpd.1*
