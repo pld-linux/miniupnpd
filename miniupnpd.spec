@@ -1,22 +1,29 @@
+# TODO: handle ip*tables_{init,removeall} in PLD init script? (see bundled one)
 Summary:	Small UPnP Daemon
 Summary(pl.UTF-8):	Mały demon UPnP
 Name:		miniupnpd
-Version:	1.7
-Release:	3
+Version:	2.0
+Release:	1
 License:	BSD
 Group:		Networking/Daemons
 Source0:	http://miniupnp.tuxfamily.org/files/%{name}-%{version}.tar.gz
-# Source0-md5:	5af9e8332d34a7b490d0d2ed3e674196
+# Source0-md5:	1c07a215dd9b362e75a9efc05e2fb3b4
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.conf
 URL:		http://miniupnp.tuxfamily.org/
 BuildRequires:	iptables-devel >= 1.4.3
+BuildRequires:	libmnl-devel >= 1.0.3
+BuildRequires:	libnetfilter_conntrack-devel >= 1.0.2
+BuildRequires:	libuuid-devel
+BuildRequires:	openssl-devel
 BuildRequires:	rpmbuild(macros) >= 1.228
 Requires(post):	libuuid
 Requires(post):	sed >= 4.0
 Requires(post,preun):	/sbin/chkconfig
 Requires:	iptables-libs >= 1.4.3
+Requires:	libmnl >= 1.0.3
+Requires:	libnetfilter_conntrack >= 1.0.2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -29,19 +36,24 @@ Mały demon UPnP.
 %setup -q
 
 %build
+CPPFLAGS="%{rpmcppflags}" \
+CFLAGS="%{rpmcflags}" \
+LDFLAGS="%{rpmldflags}" \
 %{__make} -f Makefile.linux -j1 \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -fno-strict-aliasing -Wall -D_GNU_SOURCE -DIPTABLES_143" \
-	LIBS="-lip4tc -lip6tc"
+	CC="%{__cc}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sbindir},%{_mandir}/man1,/etc/rc.d/init.d,/etc/sysconfig,%{_sysconfdir}/%{name}}
-install miniupnpd $RPM_BUILD_ROOT%{_sbindir}
-cp -p miniupnpd.1 $RPM_BUILD_ROOT%{_mandir}/man1
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
-install %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
+
+%{__make} -f Makefile.linux install \
+	DESTDIR=$RPM_BUILD_ROOT \
+	STRIP=:
+
+# replace init script and config file by PLD specific ones
+%{__rm} -r $RPM_BUILD_ROOT/etc/init.d
+install -Dp %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install -Dp %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+cp -p %{SOURCE3} $RPM_BUILD_ROOT%{_sysconfdir}/%{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -49,7 +61,7 @@ rm -rf $RPM_BUILD_ROOT
 %post
 if [ ! -f %{_sysconfdir}/miniupnpd/uuid ]; then
 	echo "Generating UPnP uuid..."
-	umask 066
+	umask 077
 	uuidgen > %{_sysconfdir}/miniupnpd/uuid
 fi
 
@@ -78,4 +90,8 @@ fi
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 %dir %{_sysconfdir}/%{name}
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/%{name}.conf
-%{_mandir}/man1/miniupnpd.1*
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/ip6tables_init.sh
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/ip6tables_removeall.sh
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/iptables_init.sh
+%attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/iptables_removeall.sh
+%{_mandir}/man8/miniupnpd.8*
