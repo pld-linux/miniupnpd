@@ -1,0 +1,54 @@
+--- miniupnpd-2.1/netfilter/iptcrdr.c.orig	2016-04-19 23:01:06.000000000 +0200
++++ miniupnpd-2.1/netfilter/iptcrdr.c	2019-04-28 19:05:56.753663560 +0200
+@@ -1116,9 +1116,7 @@
+ 	} else {
+ 		match = get_udp_match(eport, 0);
+ 	}
+-	e->nfcache = NFC_IP_DST_PT;
+ 	target = get_dnat_target(iaddr, iport);
+-	e->nfcache |= NFC_UNKNOWN;
+ 	tmp = realloc(e, sizeof(struct ipt_entry)
+ 	               + match->u.match_size
+ 				   + target->u.target_size);
+@@ -1186,9 +1184,7 @@
+ 	} else {
+ 		match = get_udp_match(0, iport);
+ 	}
+-	e->nfcache = NFC_IP_DST_PT;
+ 	target = get_masquerade_target(eport);
+-	e->nfcache |= NFC_UNKNOWN;
+ 	tmp = realloc(e, sizeof(struct ipt_entry)
+ 	               + match->u.match_size
+ 				   + target->u.target_size);
+@@ -1266,9 +1262,7 @@
+ 	} else {
+ 		match = get_udp_match(rport, iport);
+ 	}
+-	e->nfcache = NFC_IP_DST_PT | NFC_IP_SRC_PT;
+ 	target = get_snat_target(eaddr, eport);
+-	e->nfcache |= NFC_UNKNOWN;
+ 	tmp = realloc(e, sizeof(struct ipt_entry)
+ 	               + match->u.match_size
+ 				   + target->u.target_size);
+@@ -1337,9 +1331,7 @@
+ 	} else {
+ 		match = get_udp_match(rport, iport);
+ 	}
+-	e->nfcache = NFC_IP_DST_PT | NFC_IP_SRC_PT;
+ 	target = get_dscp_target(dscp);
+-	e->nfcache |= NFC_UNKNOWN;
+ 	tmp = realloc(e, sizeof(struct ipt_entry)
+ 	               + match->u.match_size
+ 				   + target->u.target_size);
+@@ -1420,11 +1412,9 @@
+ 	} else {
+ 		match = get_udp_match(iport,0);
+ 	}
+-	e->nfcache = NFC_IP_DST_PT;
+ 	e->ip.dst.s_addr = inet_addr(iaddr);
+ 	e->ip.dmsk.s_addr = INADDR_NONE;
+ 	target = get_accept_target();
+-	e->nfcache |= NFC_UNKNOWN;
+ 	tmp = realloc(e, sizeof(struct ipt_entry)
+ 	               + match->u.match_size
+ 				   + target->u.target_size);

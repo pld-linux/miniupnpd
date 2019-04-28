@@ -2,15 +2,16 @@
 Summary:	Small UPnP Daemon
 Summary(pl.UTF-8):	Mały demon UPnP
 Name:		miniupnpd
-Version:	2.0
+Version:	2.1
 Release:	1
 License:	BSD
 Group:		Networking/Daemons
 Source0:	http://miniupnp.tuxfamily.org/files/%{name}-%{version}.tar.gz
-# Source0-md5:	1c07a215dd9b362e75a9efc05e2fb3b4
+# Source0-md5:	91d0524bba6a839c05c22c9484ed9d0f
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.conf
+Patch0:		%{name}-netfilter.patch
 URL:		http://miniupnp.tuxfamily.org/
 BuildRequires:	iptables-devel >= 1.4.3
 BuildRequires:	libmnl-devel >= 1.0.3
@@ -34,6 +35,7 @@ Mały demon UPnP.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 CPPFLAGS="%{rpmcppflags}" \
@@ -94,4 +96,5 @@ fi
 %attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/ip6tables_removeall.sh
 %attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/iptables_init.sh
 %attr(755,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/%{name}/iptables_removeall.sh
+%{_sysconfdir}/%{name}/miniupnpd_functions.sh
 %{_mandir}/man8/miniupnpd.8*
