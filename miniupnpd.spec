@@ -1,23 +1,26 @@
-# TODO: handle ip*tables_{init,removeall} in PLD init script? (see bundled one)
+# TODO:
+# - handle ip*tables_{init,removeall} in PLD init script? (see bundled one)
+# - switch to nft (--firewall=nftables, BR: libnftnl-devel instead of iptables-devel)?
 Summary:	Small UPnP Daemon
 Summary(pl.UTF-8):	Mały demon UPnP
 Name:		miniupnpd
-Version:	2.1
-Release:	3
+Version:	2.3.0
+Release:	1
 License:	BSD
 Group:		Networking/Daemons
 Source0:	http://miniupnp.tuxfamily.org/files/%{name}-%{version}.tar.gz
-# Source0-md5:	91d0524bba6a839c05c22c9484ed9d0f
+# Source0-md5:	053a196ac7ba59e275e249d4173d6890
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.conf
-Patch0:		%{name}-netfilter.patch
 URL:		http://miniupnp.tuxfamily.org/
 BuildRequires:	iptables-devel >= 1.4.3
+BuildRequires:	libcap-ng-devel
 BuildRequires:	libmnl-devel >= 1.0.3
 BuildRequires:	libnetfilter_conntrack-devel >= 1.0.2
 BuildRequires:	libuuid-devel
 BuildRequires:	openssl-devel
+BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.228
 Requires(post):	libuuid
 Requires(post):	sed >= 4.0
@@ -35,19 +38,22 @@ Mały demon UPnP.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
+./configure \
+	--firewall=iptables \
+	--ipv6
+
 CPPFLAGS="%{rpmcppflags}" \
 CFLAGS="%{rpmcflags}" \
 LDFLAGS="%{rpmldflags}" \
-%{__make} -f Makefile.linux -j1 \
+%{__make} -j1 \
 	CC="%{__cc}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} -f Makefile.linux install \
+%{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	STRIP=:
 
