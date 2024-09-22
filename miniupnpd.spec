@@ -4,12 +4,12 @@
 Summary:	Small UPnP Daemon
 Summary(pl.UTF-8):	Mały demon UPnP
 Name:		miniupnpd
-Version:	2.3.0
+Version:	2.3.7
 Release:	1
 License:	BSD
 Group:		Networking/Daemons
 Source0:	http://miniupnp.tuxfamily.org/files/%{name}-%{version}.tar.gz
-# Source0-md5:	053a196ac7ba59e275e249d4173d6890
+# Source0-md5:	43eb970e34ecbb402785d29a1a6c85a2
 Source1:	%{name}.init
 Source2:	%{name}.sysconfig
 Source3:	%{name}.conf
